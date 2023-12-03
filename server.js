@@ -8,8 +8,6 @@ const passportConfig = require('./config/passport');
 
 const app = express();
 
-
-
 app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -26,22 +24,8 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/user/logged', (req, res) => {
-  res.render('logged');
-});
-
-app.get('/user/no-permission', (req, res) => {
-  res.render('noPermission');
-});
-
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'] }));
-
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/user/no-permission' }),
-  (req, res) => {
-    res.redirect('/user/logged');
-  }
-);
+app.use('/auth', require('./routes/auth.routes'));
+app.use('/user', require('./routes/user.routes'));
 
 app.use('/', (req, res) => {
   res.status(404).render('notFound');
